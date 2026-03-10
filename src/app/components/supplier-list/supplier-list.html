@@ -1,0 +1,157 @@
+<div class="supplier-list-container">
+  <div class="header-section">
+    <h2>Supplier Management</h2>
+    <p class="subtitle">Manage and monitor all suppliers</p>
+  </div>
+
+  <div class="controls-section">
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Search by name, contact, email, or city..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        class="search-input"
+      />
+    </div>
+
+    <button (click)="toggleAddForm()" class="btn btn-primary">
+      <span class="emoji-icon">🏢 <small>Add New Supplier</small></span>
+      {{ showAddForm ? 'Cancel' : 'Add Supplier' }}
+    </button>
+  </div>
+
+  <!-- Add Supplier Form -->
+  <div *ngIf="showAddForm" class="add-form-section">
+    <h3>Add New Supplier</h3>
+    <form (ngSubmit)="addSupplier()" class="form-grid">
+      <div class="form-group">
+        <label>Supplier Name *</label>
+        <input type="text" [(ngModel)]="newSupplier.name" name="name" placeholder="Company name" required />
+      </div>
+      <div class="form-group">
+        <label>Contact Person *</label>
+        <input type="text" [(ngModel)]="newSupplier.contactPerson" name="contactPerson" placeholder="Full name" required />
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" [(ngModel)]="newSupplier.email" name="email" placeholder="email@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" [(ngModel)]="newSupplier.phone" name="phone" placeholder="+1-555-0000" />
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" [(ngModel)]="newSupplier.address" name="address" placeholder="Street address" />
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" [(ngModel)]="newSupplier.city" name="city" placeholder="City" />
+      </div>
+      <div class="form-group">
+        <label>Country</label>
+        <input type="text" [(ngModel)]="newSupplier.country" name="country" placeholder="Country" />
+      </div>
+      <button type="submit" class="btn btn-success">Add Supplier</button>
+    </form>
+  </div>
+
+  <!-- Suppliers Grid -->
+  <div class="suppliers-section">
+    <div *ngIf="filteredSuppliers.length > 0; else noSuppliers" class="suppliers-grid">
+      <div *ngFor="let supplier of filteredSuppliers" class="supplier-card" [ngClass]="supplier.isActive ? 'active' : 'inactive'">
+        <div class="card-header">
+          <h3>{{ supplier.name }}</h3>
+          <span class="status-badge" [ngClass]="supplier.isActive ? 'active' : 'inactive'">
+            {{ supplier.isActive ? '✓ Active' : '✗ Inactive' }}
+          </span>
+        </div>
+
+        <div *ngIf="editingId !== supplier.id" class="card-body">
+          <div class="info-section">
+            <div class="info-item">
+              <span class="info-label">Contact Person</span>
+              <span class="info-value">{{ supplier.contactPerson }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <a href="mailto:{{ supplier.email }}" class="info-value link">{{ supplier.email }}</a>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Phone</span>
+              <a href="tel:{{ supplier.phone }}" class="info-value link">{{ supplier.phone }}</a>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ supplier.city }}, {{ supplier.country }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ supplier.address }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="editingId === supplier.id" class="card-body edit-mode">
+          <form (ngSubmit)="saveSupplier(supplier)" class="edit-form">
+            <div class="form-group">
+              <label>Supplier Name</label>
+              <input type="text" [(ngModel)]="supplier.name" name="name" />
+            </div>
+            <div class="form-group">
+              <label>Contact Person</label>
+              <input type="text" [(ngModel)]="supplier.contactPerson" name="contactPerson" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="supplier.email" name="email" />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" [(ngModel)]="supplier.phone" name="phone" />
+            </div>
+            <div class="form-group">
+              <label>Address</label>
+              <input type="text" [(ngModel)]="supplier.address" name="address" />
+            </div>
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" [(ngModel)]="supplier.city" name="city" />
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <input type="text" [(ngModel)]="supplier.country" name="country" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-success">Save</button>
+              <button type="button" (click)="cancelEdit()" class="btn btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card-footer">
+          <button (click)="toggleSupplierStatus(supplier)" [class]="supplier.isActive ? 'btn btn-warning' : 'btn btn-info'">
+            {{ supplier.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button *ngIf="editingId !== supplier.id" (click)="editSupplier(supplier)" class="btn btn-primary">Edit</button>
+          <button *ngIf="editingId === supplier.id" (click)="cancelEdit()" class="btn btn-secondary">Cancel</button>
+          <button (click)="deleteSupplier(supplier.id)" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noSuppliers>
+      <div class="empty-state">
+        <p *ngIf="searchTerm; else noSuppliersFound">No suppliers match your search.</p>
+        <ng-template #noSuppliersFound>
+          <p>No suppliers in the system. <a href="javascript:void(0)" (click)="toggleAddForm()">Add your first supplier</a></p>
+        </ng-template>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="summary">
+    <strong>Total Suppliers:</strong> {{ filteredSuppliers.length }}
+  </div>
+</div>

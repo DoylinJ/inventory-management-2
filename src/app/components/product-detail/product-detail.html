@@ -1,0 +1,201 @@
+<div class="product-detail-container">
+  <div class="header-section">
+    <button (click)="goBack()" class="btn-back">← Back to Products</button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="product" class="product-detail">
+    <div class="detail-header">
+      <div class="header-content">
+        <h2>{{ product.name }}</h2>
+        <p class="sku">SKU: {{ product.sku }}</p>
+      </div>
+      <div class="header-actions">
+        <button (click)="toggleEdit()" [class]="'btn btn-primary'">
+          {{ isEditing ? 'Cancel' : 'Edit Product' }}
+        </button>
+        <button (click)="deleteProduct()" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <!-- Stock Status Card -->
+      <div class="card status-card" [ngClass]="getStockStatusClass()">
+        <div class="card-title">Stock Status</div>
+        <div class="stock-status">
+          <div class="status-value">{{ product.quantity }} units</div>
+          <div class="status-label">{{ getStockStatus() }}</div>
+          <div class="status-detail">
+            <span>Reorder Level: {{ product.reorderLevel }}</span>
+            <span>Safety Level: {{ (product.reorderLevel * 1.5) | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Information -->
+      <div class="card">
+        <div class="card-title">Product Information</div>
+
+        <div *ngIf="!isEditing" class="info-display">
+          <div class="info-row">
+            <span class="label">Name:</span>
+            <span class="value">{{ product.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">SKU:</span>
+            <span class="value">{{ product.sku }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Description:</span>
+            <span class="value">{{ product.description || 'N/A' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Price:</span>
+            <span class="value">₹{{ product.price | number:'1.2-2' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Current Quantity:</span>
+            <span class="value">{{ product.quantity }} units</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Reorder Level:</span>
+            <span class="value">{{ product.reorderLevel }} units</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Last Updated:</span>
+            <span class="value">{{ product.lastUpdated | date:'short' }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="isEditing" class="form-edit">
+          <form [formGroup]="productForm" (ngSubmit)="saveChanges()">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Product Name *</mat-label>
+              <input matInput formControlName="name" />
+              <mat-error *ngIf="productForm.get('name')?.hasError('required')">Name is required</mat-error>
+              <mat-error *ngIf="productForm.get('name')?.hasError('minlength')">Name must be at least 2 characters</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>SKU *</mat-label>
+              <input matInput formControlName="sku" />
+              <mat-error *ngIf="productForm.get('sku')?.hasError('required')">SKU is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3"></textarea>
+            </mat-form-field>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Price *</mat-label>
+                <input matInput type="number" formControlName="price" step="0.01" min="0.01" />
+                <mat-error *ngIf="productForm.get('price')?.hasError('required')">Price is required</mat-error>
+                <mat-error *ngIf="productForm.get('price')?.hasError('min')">Price must be greater than 0</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Reorder Level *</mat-label>
+                <input matInput type="number" formControlName="reorderLevel" min="1" />
+                <mat-error *ngIf="productForm.get('reorderLevel')?.hasError('required')">Reorder level is required</mat-error>
+                <mat-error *ngIf="productForm.get('reorderLevel')?.hasError('min')">Reorder level must be at least 1</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit" [disabled]="!productForm.valid">
+                <span class="emoji-icon">💾 <small>Save Product Changes</small></span>
+                Save Changes
+              </button>
+              <button mat-button type="button" (click)="toggleEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Quantity Management -->
+        <div class="quantity-section" *ngIf="!isEditing">
+          <h4>Update Quantity</h4>
+          <div class="quantity-controls">
+            <button mat-icon-button color="warn" (click)="updateQuantity('subtract')" [disabled]="product.quantity <= 0">
+              <span class="emoji-icon">➖</span>
+            </button>
+            <span class="quantity-display">{{ product.quantity }}</span>
+            <button mat-icon-button color="primary" (click)="updateQuantity('add')">
+              <span class="emoji-icon">➕</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supplier Information -->
+      <div class="card" *ngIf="supplier">
+        <div class="card-title">Supplier Information</div>
+        <div class="info-display">
+          <div class="info-row">
+            <span class="label">Supplier:</span>
+            <span class="value">{{ supplier.name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Contact Person:</span>
+            <span class="value">{{ supplier.contactPerson }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Email:</span>
+            <span class="value">
+              <a href="mailto:{{ supplier.email }}">{{ supplier.email }}</a>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Phone:</span>
+            <span class="value">
+              <a href="tel:{{ supplier.phone }}">{{ supplier.phone }}</a>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Address:</span>
+            <span class="value">{{ supplier.address }}, {{ supplier.city }}, {{ supplier.country }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Status:</span>
+            <span class="value">
+              <span class="status-badge" [ngClass]="supplier.isActive ? 'active' : 'inactive'">
+                {{ supplier.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Value -->
+      <div class="card">
+        <div class="card-title">Inventory Value</div>
+        <div class="value-calculation">
+          <div class="calc-row">
+            <span>Unit Price:</span>
+            <span>₹{{ product.price | number:'1.2-2' }}</span>
+          </div>
+          <div class="calc-row">
+            <span>×</span>
+            <span>Quantity: {{ product.quantity }}</span>
+          </div>
+          <div class="calc-row total">
+            <span>Total Value:</span>
+            <span>₹{{ (product.price * product.quantity) | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!product && !errorMessage" class="loading">
+    Loading product details...
+  </div>
+</div>

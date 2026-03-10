@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Reduced font sizes for all titles */
+h1 {
+  font-size: 1.5rem !important;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 1.25rem !important;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 1.1rem !important;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 1rem !important;
+  font-weight: 500;
+}
+
+h5 {
+  font-size: 0.9rem !important;
+  font-weight: 500;
+}
+
+h6 {
+  font-size: 0.8rem !important;
+  font-weight: 500;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

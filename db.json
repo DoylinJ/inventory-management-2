@@ -1,0 +1,137 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop",
+      "sku": "PROD-001",
+      "description": "High-performance laptop with 16GB RAM",
+      "quantity": 45,
+      "reorderLevel": 20,
+      "price": 1299.99,
+      "supplierId": 1,
+      "lastUpdated": "2026-03-10T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Wireless Mouse",
+      "sku": "PROD-002",
+      "description": "Ergonomic wireless mouse",
+      "quantity": 150,
+      "reorderLevel": 50,
+      "price": 29.99,
+      "supplierId": 2,
+      "lastUpdated": "2026-03-10T10:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "USB-C Hub",
+      "sku": "PROD-003",
+      "description": "7-port USB-C hub with power delivery",
+      "quantity": 8,
+      "reorderLevel": 30,
+      "price": 79.99,
+      "supplierId": 1,
+      "lastUpdated": "2026-03-10T10:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "name": "Mechanical Keyboard",
+      "sku": "PROD-004",
+      "description": "RGB mechanical keyboard with custom switches",
+      "quantity": 62,
+      "reorderLevel": 25,
+      "price": 149.99,
+      "supplierId": 2,
+      "lastUpdated": "2026-03-10T10:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "name": "Monitor",
+      "sku": "PROD-005",
+      "description": "4K monitor with 100Hz refresh rate",
+      "quantity": 28,
+      "reorderLevel": 15,
+      "price": 599.99,
+      "supplierId": 3,
+      "lastUpdated": "2026-03-10T10:00:00.000Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "TechCore Supplies",
+      "contactPerson": "John Smith",
+      "email": "john@techcore.com",
+      "phone": "+1-555-0101",
+      "address": "123 Tech Street",
+      "city": "San Francisco",
+      "country": "USA",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "name": "PeripheralHub Inc",
+      "contactPerson": "Sarah Johnson",
+      "email": "sarah@peripheralhub.com",
+      "phone": "+1-555-0102",
+      "address": "456 Device Avenue",
+      "city": "Seattle",
+      "country": "USA",
+      "isActive": true
+    },
+    {
+      "id": 3,
+      "name": "Global Electronics Ltd",
+      "contactPerson": "Michael Chen",
+      "email": "michael@globalelectronics.com",
+      "phone": "+1-555-0103",
+      "address": "789 Component Road",
+      "city": "Austin",
+      "country": "USA",
+      "isActive": true
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "orderNumber": "ORD-001",
+      "supplierId": 1,
+      "items": [
+        { "id": 1, "productId": 1, "quantity": 10, "unitPrice": 1299.99 }
+      ],
+      "orderDate": "2026-01-15T00:00:00.000Z",
+      "estimatedDelivery": "2026-01-25T00:00:00.000Z",
+      "actualDelivery": "2026-01-24T00:00:00.000Z",
+      "status": "received",
+      "totalAmount": 12999.90,
+      "notes": "Expedited shipping requested"
+    },
+    {
+      "id": 2,
+      "orderNumber": "ORD-002",
+      "supplierId": 2,
+      "items": [
+        { "id": 2, "productId": 2, "quantity": 50, "unitPrice": 29.99 },
+        { "id": 3, "productId": 4, "quantity": 25, "unitPrice": 149.99 }
+      ],
+      "orderDate": "2026-01-18T00:00:00.000Z",
+      "estimatedDelivery": "2026-02-01T00:00:00.000Z",
+      "status": "pending",
+      "totalAmount": 4749.65,
+      "notes": "Standard shipping"
+    },
+    {
+      "id": 3,
+      "orderNumber": "ORD-003",
+      "supplierId": 3,
+      "items": [
+        { "id": 4, "productId": 5, "quantity": 15, "unitPrice": 599.99 }
+      ],
+      "orderDate": "2026-01-20T00:00:00.000Z",
+      "estimatedDelivery": "2026-02-05T00:00:00.000Z",
+      "status": "pending",
+      "totalAmount": 8999.85,
+      "notes": "Fragile - handle with care"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+<mat-toolbar color="primary" class="app-toolbar">
+  <button mat-icon-button (click)="toggleSidebar()" class="toolbar-toggle">
+    <span class="emoji-icon">☰</span>
+  </button>
+  <span class="toolbar-title">📦 Inventory Management System</span>
+  <span class="spacer"></span>
+  <button mat-icon-button matTooltip="Settings">
+    <span class="emoji-icon">⚙️ <small>Application Settings</small></span>
+  </button>
+</mat-toolbar>
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" [opened]="sidebarOpen" class="app-sidenav">
+    <mat-nav-list>
+      <h2 matSubheader>Management</h2>
+      <mat-list-item [routerLink]="'/dashboard'" routerLinkActive="active" (click)="closeSidebar()">
+        <span class="emoji-icon" matListItemIcon>📊 <small>Dashboard</small></span>
+        <span matListItemTitle>Dashboard</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="'/products'" routerLinkActive="active" (click)="closeSidebar()">
+        <span class="emoji-icon" matListItemIcon>📦 <small>Products</small></span>
+        <span matListItemTitle>Products</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="'/suppliers'" routerLinkActive="active" (click)="closeSidebar()">
+        <span class="emoji-icon" matListItemIcon>🏢 <small>Suppliers</small></span>
+        <span matListItemTitle>Suppliers</span>
+      </mat-list-item>
+      <mat-list-item [routerLink]="'/orders'" routerLinkActive="active" (click)="closeSidebar()">
+        <span class="emoji-icon" matListItemIcon>🛒 <small>Orders</small></span>
+        <span matListItemTitle>Orders</span>
+      </mat-list-item>
+
+      <h2 matSubheader>System</h2>
+      <mat-list-item>
+        <span class="emoji-icon" matListItemIcon>ℹ️ <small>Info</small></span>
+        <span matListItemTitle>Version 1.0.0</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

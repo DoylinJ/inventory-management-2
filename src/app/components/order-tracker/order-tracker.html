@@ -1,0 +1,215 @@
+<div class="order-tracker-container">
+  <div class="header-section">
+    <h2>Order Tracking</h2>
+    <p class="subtitle">Monitor stock inflow and outflow</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-value">{{ getOrderStats().total }}</div>
+      <div class="stat-label">Total Orders</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-value">{{ getOrderStats().pending }}</div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card received">
+      <div class="stat-value">{{ getOrderStats().received }}</div>
+      <div class="stat-label">Received</div>
+    </div>
+    <div class="stat-card cancelled">
+      <div class="stat-value">{{ getOrderStats().cancelled }}</div>
+      <div class="stat-label">Cancelled</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-section">
+    <div class="search-group">
+      <input
+        type="text"
+        placeholder="Search by order number or notes..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        class="search-input"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="filterStatus" (change)="onFilterChange()" class="filter-select">
+        <option value="all">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="received">Received</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <button (click)="toggleAddForm()" class="btn btn-primary">
+      <span class="emoji-icon">🛒 <small>Create New Order</small></span>
+      {{ showAddForm ? 'Cancel' : 'Create Order' }}
+    </button>
+  </div>
+
+  <!-- Create Order Form -->
+  <div *ngIf="showAddForm" class="add-form-section">
+    <h3>Create New Order</h3>
+    <form class="create-order-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Order Number *</label>
+          <input type="text" [(ngModel)]="newOrder.orderNumber" name="orderNumber" placeholder="e.g., ORD-001" required />
+        </div>
+        <div class="form-group">
+          <label>Supplier *</label>
+          <select [(ngModel)]="newOrder.supplierId" name="supplier" required>
+            <option *ngFor="let supplier of suppliers" [value]="supplier.id">
+              {{ supplier.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Order Date</label>
+          <input type="date" [(ngModel)]="newOrder.orderDate" name="orderDate" />
+        </div>
+        <div class="form-group">
+          <label>Estimated Delivery</label>
+          <input type="date" [(ngModel)]="newOrder.estimatedDelivery" name="estimatedDelivery" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea [(ngModel)]="newOrder.notes" name="notes" placeholder="Additional notes..." rows="3"></textarea>
+      </div>
+
+      <!-- Add Items to Order -->
+      <div class="items-section">
+        <h4>Order Items</h4>
+        <div class="add-item-form">
+          <div class="item-row">
+            <select [(ngModel)]="selectedProductId" name="productId" class="product-select">
+              <option [value]="0">Select a product...</option>
+              <option *ngFor="let product of products" [value]="product.id">
+                {{ product.name }} (Stock: {{ product.quantity }})
+              </option>
+            </select>
+            <input
+              type="number"
+              [(ngModel)]="selectedQuantity"
+              name="quantity"
+              placeholder="Qty"
+              min="1"
+              class="quantity-input"
+            />
+            <button type="button" (click)="addItemToOrder()" class="btn btn-small btn-success">Add Item</button>
+          </div>
+        </div>
+
+        <!-- Items List -->
+        <div *ngIf="newOrder.items.length > 0" class="items-list">
+          <div class="items-header">
+            <div>Product</div>
+            <div>Quantity</div>
+            <div>Unit Price</div>
+            <div>Total</div>
+            <div>Action</div>
+
+          </div>
+          <div *ngFor="let item of newOrder.items; let i = index" class="item-row">
+            <div>{{ getProductName(item.productId) }}</div>
+            <div>{{ item.quantity }}</div>
+            <div>₹{{ item.unitPrice | number:'1.2-2' }}</div>
+            <div>₹{{ (item.quantity * item.unitPrice) | number:'1.2-2' }}</div>
+            <button type="button" (click)="removeItemFromOrder(i)" class="btn btn-small btn-danger">Remove</button>
+          </div>
+        </div>
+
+        <div *ngIf="newOrder.items.length > 0" class="order-total">
+          <strong>Total Order Value: ₹{{ newOrder.totalAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <button type="button" (click)="createOrder()" class="btn btn-success" [disabled]="newOrder.items.length === 0">
+        Create Order
+      </button>
+    </form>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-section">
+    <div *ngIf="filteredOrders.length > 0; else noOrders" class="orders-grid">
+      <div *ngFor="let order of filteredOrders" class="order-card" [ngClass]="'status-' + order.status">
+        <div class="card-header">
+          <h3>{{ order.orderNumber }}</h3>
+          <span class="status-badge" [ngClass]="order.status">{{ order.status }}</span>
+        </div>
+
+        <div class="card-body">
+          <div class="order-info">
+            <div class="info-row">
+              <span class="label">Supplier:</span>
+              <span class="value">{{ getSupplierName(order.supplierId) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Order Date:</span>
+              <span class="value">{{ order.orderDate | date:'short' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Est. Delivery:</span>
+              <span class="value">{{ order.estimatedDelivery | date:'short' }}</span>
+            </div>
+            <div class="info-row" *ngIf="order.actualDelivery">
+              <span class="label">Delivered:</span>
+              <span class="value">{{ order.actualDelivery | date:'short' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Total Amount:</span>
+              <span class="value strong">₹{{ order.totalAmount | number:'1.2-2' }}</span>
+            </div>
+            <div class="info-row" *ngIf="order.notes">
+              <span class="label">Notes:</span>
+              <span class="value">{{ order.notes }}</span>
+            </div>
+          </div>
+
+          <div class="items-preview">
+            <strong>Items ({{ order.items.length }})</strong>
+            <div class="items-list-compact">
+              <div *ngFor="let item of order.items" class="item-preview">
+                <span>{{ getProductName(item.productId) }}</span>
+                <span>×{{ item.quantity }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <select 
+            [(ngModel)]="order.status" 
+            (change)="updateOrderStatus(order, order.status)"
+            class="status-select"
+          >
+            <option value="pending">Pending</option>
+            <option value="received">Received</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <button (click)="deleteOrder(order.id)" class="btn btn-small btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noOrders>
+      <div class="empty-state">
+        <p *ngIf="searchTerm || filterStatus !== 'all'; else noOrdersFound">No orders match your search.</p>
+        <ng-template #noOrdersFound>
+          <p>No orders found. <a href="javascript:void(0)" (click)="toggleAddForm()">Create your first order</a></p>
+        </ng-template>
+      </div>
+    </ng-template>
+  </div>
+</div>

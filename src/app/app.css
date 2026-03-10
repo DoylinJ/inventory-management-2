@@ -1,0 +1,217 @@
+/* Application Layout Styles */
+
+:host {
+  display: block;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar-toggle {
+  margin-right: 16px;
+}
+
+.toolbar-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Sidenav Container */
+.sidenav-container {
+  height: calc(100vh - 64px);
+  background: #fafafa;
+}
+
+.app-sidenav {
+  width: 250px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.app-sidenav mat-nav-list {
+  padding: 0;
+}
+
+.app-sidenav h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #999;
+  letter-spacing: 1px;
+  padding: 8px 16px 8px 16px;
+  margin: 8px 0 0 0;
+}
+
+.app-sidenav mat-list-item {
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.app-sidenav mat-list-item.active {
+  background: #e3f2fd;
+  border-left-color: #1976d2;
+}
+
+.app-sidenav mat-list-item:hover {
+  background: #f0f0f0;
+  border-left-color: #1976d2;
+}
+
+.app-sidenav mat-list-item span {
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidenav-container {
+    height: calc(100vh - 56px);
+  }
+
+  .app-toolbar {
+    height: 56px;
+  }
+
+  .app-sidenav {
+    width: 100%;
+  }
+
+  .toolbar-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toolbar-title {
+    display: none;
+  }
+
+  .spacer {
+    flex: 0;
+  }
+}
+
+
+.version-info p {
+  margin: 4px 0;
+}
+
+/* Content Area */
+main.main-container {
+  flex: 1;
+  margin-left: 250px;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+}
+
+/* Sidebar Overlay (Mobile) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  main.main-container {
+    margin-left: 0;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .navbar h1 {
+    font-size: 1.2rem;
+  }
+
+  .sidebar-nav a {
+    padding: 14px 20px;
+  }
+
+  .version-info {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .navbar h1 {
+    font-size: 1rem;
+  }
+
+  .sidebar-toggle {
+    padding: 6px 10px;
+  }
+
+  .sidebar-toggle span {
+    width: 20px;
+    height: 2.5px;
+  }
+
+  main.main-container {
+    padding: 12px;
+  }
+}
+
+/* Scrollbar Styling */
+.sidebar::-webkit-scrollbar,
+main.main-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+main.main-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+main.main-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+main.main-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
